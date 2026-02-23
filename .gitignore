@@ -30,17 +30,26 @@ myown/
 # Data files
 *.xlsx
 
-# Scratch / experiment files (not part of the core app)
+# Other project files (not part of xml_generator)
+app_functions.py
 bug_viewer.py
-streamlit_bug_viewer.py
-bug_notes.py
+bug2.py
 bug2_backup.py
-ollama_llama31_tool_call.py
+bug_notes.py
+cisco_product_agent.py
 Convert.py
+first_draft_tab.py
+hal_check_tab.py
+ingestion.py
+ollama_llama31_tool_call.py
 Pearl.py
+prompt_template.py
 RCA.py
 semantic_query.py
-cisco_product_agent.py
+streamlit_app.py
+streamlit_bug_viewer.py
+structured_output.py
+utils.py
 
 # Scratch notes
 bug.md
