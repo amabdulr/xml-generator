@@ -13,6 +13,8 @@ A Streamlit app for generating Cisco DITA XML files from templates. Create conce
 ## Setup
 
 ```bash
+git clone https://github.com/amabdulr/xml-generator.git
+cd xml-generator
 python -m venv .venv
 source .venv/bin/activate   # macOS/Linux
 pip install -r requirements.txt
