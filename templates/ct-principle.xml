@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ct_principle PUBLIC "-//CISCO//DTD DITA 1.3 ct_principle v1.0//EN" "cisco-ct-principle.dtd">
+<ct_principle id="CN_Concept.dita_3317e3eb-b9f4-4e14-a332-4cafad5dce29" xml:lang="en_US">
+    <title><!--Principle topic title should follow gravity+principle or principle+gravity --></title>
+    <!--Writer tip: Principle topic title should follow gravity+principle or principle+gravity -->
+    <shortdesc></shortdesc>
+    <ct_principle_body>
+        <principle_statement>
+            <title><!--Writer tip: Use this title only when you need to logically group multiple principles that belong to the same category.--></title>
+            <principle_article>
+                <p><?oxy-placeholder content=" Writer tip: This mandatory component of a principle statement states the essence of the principle, such as a tip, recommendation, note, caution or a graphic principle. Use this to write or insert a Reuse Content component that qualifies as a principle. Use second person, imperative verb and active voice wherever applicable."?></p>
+            </principle_article>
+            <sub_article>
+                <ul>
+                    <li>
+                        <p><?oxy-placeholder content=" Use these for minor additions to the principle. If you include sub-articles, include at least two. Otherwise, incorporate a single sub-article into the principle article."?></p>
+                    </li>
+                    <li>
+                        <p><?oxy-placeholder content=" Use these for minor additions to the principle. If you include sub-articles, include at least two. Otherwise, incorporate a single sub-article into the principle article."?></p>
+                    </li>
+                </ul>
+            </sub_article>
+        </principle_statement>
+        <applicability>
+            <p/>
+        </applicability>
+        <rationale>
+            <p/>
+        </rationale>
+        <outcome>
+            <p/>
+        </outcome>
+        <resolution>
+            <p/>
+        </resolution>
+        <principle_statement>
+            <title><!--Writer tip: Use this title only when you need to logically group multiple principles that belong to the same category.--></title>
+            <principle_article>
+                <p><?oxy-placeholder content=" Writer tip: This mandatory component of a principle statement states the essence of the principle, such as a tip, recommendation, note, caution or a graphic principle. Use this to write or insert a Reuse Content component that qualifies as a principle. Use second person, imperative verb and active voice wherever applicable."?></p>
+            </principle_article>
+            <sub_article>
+                <ul>
+                    <li>
+                        <p><?oxy-placeholder content=" Use these for minor additions to the principle. If you include sub-articles, include at least two. Otherwise, incorporate a single sub-article into the principle article."?></p>
+                    </li>
+                    <li>
+                        <p><?oxy-placeholder content=" Use these for minor additions to the principle. If you include sub-articles, include at least two. Otherwise, incorporate a single sub-article into the principle article."?></p>
+                    </li>
+                </ul>
+            </sub_article>
+        </principle_statement>
+        <applicability>
+            <p/>
+        </applicability>
+        <rationale>
+            <p/>
+        </rationale>
+        <outcome>
+            <p/>
+        </outcome>
+        <resolution>
+            <p/>
+        </resolution>
+    </ct_principle_body>
+</ct_principle> 

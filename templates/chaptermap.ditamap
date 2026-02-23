@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map PUBLIC "-//CISCO//DTD DITA 1.3 Map v1.0//EN" "cisco-map.dtd">
+<!-- Please change the title attribute of the <map> element using Attribute Inspector, whenever you change the <title> text. -->
+<map xml:lang="en_US" title="Chapter Map" id="map_jdg_xvp_13c">
+    <title>Chapter Map</title>
+    <topicref navtitle="Topic 1"/>
+    <topicref navtitle="Topic 2">
+        <topicref navtitle="Topic 2.1"/>
+    </topicref>
+    <topicref navtitle="Topic 3"/>
+    <reltable>
+            <relheader>
+                <relcolspec type="concept"/>
+                <relcolspec type="task"/>
+                <relcolspec type="reference"/>
+            </relheader>
+            <relrow/>
+            <relrow>
+                <relcell>
+                    <topicref navtitle="Insert concept topicref"/>
+                </relcell>
+                <relcell>
+                    <topicref navtitle="Insert task topicref"/>
+                </relcell>
+                <relcell>
+                    <topicref navtitle="Insert reference topicref"/>
+                </relcell>
+            </relrow>
+    </reltable>
+</map>

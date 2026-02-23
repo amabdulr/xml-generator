@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ct_task PUBLIC "-//CISCO//DTD DITA 1.3 ct_task v1.0//EN" "C:\Users\svastral\Downloads\cisco_CT_guideline\Cisco_CT-Task\cisco-ct-task.dtd">
+<ct_task id="CN_Task.dita_33bc3d2c-5b5e-4a6d-9962-fb431367a7c8" outputclass="no_summary_steps" xml:lang="en_US">
+  <title><!--Task Title: Use the imperative form of verb+article+subject matter--></title>
+  <!--Task Title: Use the imperative form of verb+article+subject matter-->
+  <shortdesc/>
+  <!--The task topic instructs the user on the steps to take to do something or complete a procedure. Voice and Tone: Second person imperative, active voice.-->
+  <ct_taskbody>
+    <purpose>
+      <p><?oxy-placeholder content=" Purpose (Mandatory): Use this block to provide the reason for performing this task."?></p>
+      <ul>
+        <li>
+          <p/>
+        </li>
+      </ul>
+      <p><?oxy-placeholder content=" Stem sentence (Optional): Use a stem sentence if it is necessary to convey additional information beyond the task title. Exclude it if it merely reiterates the task title."?></p>
+    </purpose>
+    <context> <p><?oxy-placeholder content=" Context (Optional): Use this block to include any additional information that helps orient the reader to the task, aiding in successful task completion."?></p></context>
+    <prereq>
+      <p/>
+      <ul>
+        <li>
+          <p/>
+        </li>
+      </ul>
+    </prereq>
+    
+    <steps outputclass="notable">
+      <step>
+        <cmd><!--(Mandatory) Command or Step. For GUI task commands: Navigation before action.For CLI task commands: Action before purpose.--></cmd>
+        <stepxmp><!--(Optional) Command or Step example.-->
+          <codeblock/>
+        </stepxmp>
+        <info>
+          <p><?oxy-placeholder content=" (Optional) Any additional Information on the step."?></p>
+        </info>
+        <info>
+          <table colsep="1" frame="all" rowsep="1">
+            <title><!--(Optional) If-Then Condition Table: Use the table to present conditions or decisions and the corresponding actions or results in a clear or logical manner.--></title>
+            <tgroup cols="2">
+              <colspec colname="c1" colnum="1" colwidth="1*"/>
+              <colspec colname="c2" colnum="2" colwidth="1*"/>
+              <thead>
+                <row>
+                  <entry>
+                    <p>If..</p>
+                  </entry>
+                  <entry>
+                    <p>Then..</p>
+                  </entry>
+                </row>
+              </thead>
+              <tbody>
+                <row>
+                  <entry>
+                    <p><?oxy-placeholder content=" Condition 1"?></p>
+                  </entry>
+                  <entry>
+                    <p><?oxy-placeholder content=" Action 1"?></p>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <p><?oxy-placeholder content=" Condition 2"?></p>
+                  </entry>
+                  <entry>
+                    <p><?oxy-placeholder content=" Action 2"?></p>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <p><?oxy-placeholder content=" Condition 3"?></p>
+                  </entry>
+                  <entry>
+                    <p><?oxy-placeholder content=" Action 3"?></p>
+                  </entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </table>
+          <table colsep="1" frame="all" outputclass="when_then" rowsep="1">
+            <title><!--(Optional) When-Then Condition Table: Use the table to communicate cause and effect situations or to describe conditions and results. --></title>
+            <tgroup cols="4">
+              <colspec colname="c1" colnum="1" colwidth="1*"/>
+              <colspec colname="c2" colnum="2" colwidth="1*"/>
+              <colspec colname="c3" colnum="3" colwidth="1*"/>
+              <colspec colname="c4" colnum="4" colwidth="1*"/>
+              <thead>
+                <row>
+                  <entry>
+                    <p>When..</p>
+                  </entry>
+                  <entry>
+                    <p>And..</p>
+                  </entry>
+                  <entry>
+                    <p>Then..</p>
+                  </entry>
+                  <entry>
+                    <p>And..</p>
+                  </entry>
+                </row>
+              </thead>
+              <tbody>
+                <row>
+                  <entry>
+                    <p><?oxy-placeholder content=" Condition 1"?></p>
+                  </entry>
+                  <entry>
+                    <p><?oxy-placeholder content=" Condition 2"?></p>
+                  </entry>
+                  <entry>
+                    <p><?oxy-placeholder content=" Action 1"?></p>
+                  </entry>
+                  <entry>
+                    <p><?oxy-placeholder content=" Action 2"?></p>
+                  </entry>
+                </row>
+                <row>
+                  <entry>
+                    <p/>
+                  </entry>
+                  <entry>
+                    <p/>
+                  </entry>
+                  <entry>
+                    <p/>
+                  </entry>
+                  <entry>
+                    <p/>
+                  </entry>
+                </row>
+              </tbody>
+            </tgroup>
+          </table>
+        </info>
+        <choices><!--(Optional) Choice Table: Use the table to show multiple ways the user can perform the step to achieve the same result.-->
+          <choice/>
+        </choices>
+        <info>
+          <fig>
+            <title/>
+            <!--(Optional) Graphic Task: Use an image to illustrate the step.-->
+          </fig>
+        </info>
+        <info>
+          <ul>
+            <li>
+              <p/>
+            </li>
+          </ul>
+        </info>
+        <stepresult>
+          <p/>
+        </stepresult>
+      </step>
+    </steps>
+    <result>
+      <p/>
+    </result>
+    <example>
+      <p/>
+    </example>
+    <postreq>
+      <p/>
+      <ul>
+        <li>
+          <p/>
+        </li>
+      </ul>
+    </postreq>
+  </ct_taskbody>
+</ct_task> 

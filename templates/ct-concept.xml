@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ct_concept PUBLIC "-//CISCO//DTD DITA 1.3 ct_concept v1.0//EN" "cisco-ct-concept.dtd">
+<ct_concept id="CN_Concept.dita_d6243295-2645-437f-88dd-94e0f9f5c1b0" xml:lang="en_US">
+    <title><!--Title Formula: Plural form of the subject--></title>
+    <shortdesc></shortdesc>
+    <ct_conbody>
+        <definition>
+            <p><?oxy-placeholder content=" Definition formula: The item is a category - name that ….….."?></p>
+            <ul>
+                <li>
+                    <p><?oxy-placeholder content=" key attribute 1"?></p>
+                </li>
+                <li>
+                    <p><?oxy-placeholder content=" key attribute 2, and"?></p>
+                </li>
+                <li>
+                    <p><?oxy-placeholder content=" key attribute 3"?></p>
+                </li>
+            </ul>
+            <sub-definition></sub-definition>
+        </definition>
+        <reference-info>
+            <title><!--Supporting reference information title--></title>
+            <!--Use Chunk Title Formula: What is it about? What about what it's about?-->
+            <p></p>
+            <!--TIP: Unordered lists: Use for multiple items-->
+            <p><?oxy-placeholder content=" Stem sentence for unordered list"?></p>
+            <ul>
+                <li>
+                    <p/>
+                </li>
+            </ul>
+            <!--TIP: Ordered lists: Use when items appear in a sequence.-->
+            <p><?oxy-placeholder content=" Stem sentence for ordered list."?></p>
+            <ol>
+                <li>
+                    <p/>
+                </li>
+            </ol>
+            <!--TIP: Item description lists:Use an item-description list when each list item has two parts.-->
+            <p><?oxy-placeholder content=" Stem sentence for item description list."?></p>
+            <ul>
+                <li>
+                    <p>Item: Description</p>
+                </li>
+            </ul>
+            <p><?oxy-placeholder content=" Stem sentence for comparison table."?></p>
+            <table colsep="1" frame="all" rowsep="1" outputclass="comparison_table">
+                <title>Comparison Table Title</title>
+                <tgroup cols="3">
+                    <colspec colwidth="1*" colnum="1" colname="c1"/>
+                    <colspec colwidth="1*" colnum="2" colname="c2"/>
+                    <colspec colwidth="1*" colnum="3" colname="c3"/>
+                    <thead>
+                        <row>
+                            <entry>
+                                <p><?oxy-placeholder content=" Attributes"?></p>
+                            </entry>
+                            <entry>
+                                <p><?oxy-placeholder content=" Item 1"?></p>
+                            </entry>
+                            <entry>
+                                <p><?oxy-placeholder content=" Item 2"?></p>
+                            </entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry>
+                                <p><?oxy-placeholder content=" Attribute 1"?></p>
+                            </entry>
+                            <entry>
+                                <p/>
+                            </entry>
+                            <entry>
+                                <p/>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <p><?oxy-placeholder content=" Attribute 2"?></p>
+                            </entry>
+                            <entry>
+                                <p/>
+                            </entry>
+                            <entry>
+                                <p/>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+            <p><?oxy-placeholder content=" Stem sentence for contrast table."?></p>
+            <table colsep="1" frame="all" rowsep="1" outputclass="contrast_table">
+                <title>Contrast Table Title</title>
+                <tgroup cols="2">
+                    <colspec colwidth="1*" colnum="1" colname="c1"/>
+                    <colspec colwidth="1*" colnum="2" colname="c2"/>
+                    <thead>
+                        <row>
+                            <entry>
+                                <p><?oxy-placeholder content=" Item 1"?></p>
+                            </entry>
+                            <entry>
+                                <p><?oxy-placeholder content=" Item 2"?></p>
+                            </entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry>
+                                <p/>
+                            </entry>
+                            <entry>
+                                <p/>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+            <p><?oxy-placeholder content=" Stem sentence for lookup table."?></p>
+            <table colsep="1" frame="all" rowsep="1" outputclass="lookup_table">
+                <title>Look up Table Title</title>
+                <tgroup cols="3">
+                    <colspec colwidth="1*" colnum="1" colname="c1"/>
+                    <colspec colwidth="1*" colnum="2" colname="c2"/>
+                    <colspec colwidth="1*" colnum="3" colname="c3"/>
+                    <thead>
+                        <row>
+                            <entry>
+                                <p><?oxy-placeholder content=" Items"?></p>
+                            </entry>
+                            <entry>
+                                <p><?oxy-placeholder content=" Attribute 1"?></p>
+                            </entry>
+                            <entry>
+                                <p><?oxy-placeholder content=" Attribute 2"?></p>
+                            </entry>
+                        </row>
+                    </thead>
+                    <tbody>
+                        <row>
+                            <entry>
+                                <p><?oxy-placeholder content=" Item 1"?></p>
+                            </entry>
+                            <entry>
+                                <p/>
+                            </entry>
+                            <entry>
+                                <p/>
+                            </entry>
+                        </row>
+                        <row>
+                            <entry>
+                                <p><?oxy-placeholder content=" Item 2"?></p>
+                            </entry>
+                            <entry>
+                                <p/>
+                            </entry>
+                            <entry>
+                                <p/>
+                            </entry>
+                        </row>
+                    </tbody>
+                </tgroup>
+            </table>
+            <!--PRINCIPLE NOTES: TIP: Include a principle note to counsel or warn the user. -->
+            <note>
+                <p><?oxy-placeholder content=" TIP: Choose the appropriate note type from the attributes."?></p>
+            </note>
+            <!--VISUALS: TIP: An image, or multimedia representation of the concept definition. Ensure the visual for a definition clearly and accurately captures the definition.-->
+            <p><?oxy-placeholder content=" Stem sentence for the visual."?></p>
+            <fig>
+                <title><!--Figure Title--></title>
+                <image/>
+            </fig>
+        </reference-info>
+        <example>
+            <title><!--Supporting example title--></title>
+            <!--Use Chunk Title Formula: What is it about? What about what it's about? -->
+            <p><?oxy-placeholder content=" Optional example: Examples can be text only, graphics only, or a combination of text and graphics. Provide examples that show a typical instance of the concept and display all the key attributes."?></p>
+        </example>
+        <counter-example>
+            <title><!--Supporting counter-example title--></title>
+            <!--Use Chunk Title Formula : What is it about? What about what it's about?-->
+            <p></p>
+        </counter-example>
+        <analogy>
+            <title><!--Supporting analogy title--></title>
+            <!--Use Chunk Title Formula: What is it about? What about What it's about?-->
+            <p></p>
+        </analogy>
+    </ct_conbody>
+</ct_concept>
