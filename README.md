@@ -1,40 +1,32 @@
-# Bootcamp Day 2
+# DITA XML Generator
 
-[see main repo for all days](https://wwwin-github.cisco.com/GenAI-Bootcamp/GenAI-Bootcamp)
+A Streamlit app for generating Cisco DITA XML files from templates. Create concepts, tasks, processes, principles, and references — then bundle them into a chapter map and download as a zip.
 
-## Environment Setup
+## Features
 
-For the bootcamp we recommend using CX AI Playground or BridgeIT APIs. Below are the steps to set up your environment
-for both options. You will set `CISCO_API_TYPE` environment variable to choose between the two APIs and this will take
-care of what APIs to talk to.
+- Generate DITA XML files from predefined templates (concept, task, process, principle, reference)
+- Automatically applies proper naming conventions (kebab-case IDs, type prefixes like `c-`, `t-`, `pr-`, etc.)
+- Create chapter maps (`.ditamap`) that organize generated files by type
+- Upload and incorporate your own XML files alongside generated ones
+- Download all files as a zip
 
-Configure your environment variables in a `.env` file based on your chosen API:
+## Setup
 
-### CXAI Playground
-
-```env
-CISCO_API_TYPE=cxai
-OPENAI_API_BASE="https://cxai-playground.cisco.com/"
-OPENAI_API_KEY=your-cxai-playground-key
+```bash
+pip install -r requirements.txt
+streamlit run xml_generator.py
 ```
 
-### BridgeIT
+## Project Structure
 
-```env
-CISCO_API_TYPE=bridgeit
-BRIDGEIT_CLIENT_ID=your-client-id
-BRIDGEIT_CLIENT_SECRET=your-client-secret
-BRIDGEIT_APP_KEY=your-app-key
-BRIDGEIT_BRAIN_USER_ID=your-brain-user-id
 ```
-For `BRIDGEIT_BRAIN_USER_ID` use your CEC ID.
-
-## Token Caching
-
-For BridgeIT authentication, the system implements local token caching:
-
-- Tokens are cached in `auth_token_cache.json` (automatically gitignored)
-- Cache includes the token and its expiration time
-- Cached tokens are reused if still valid (1-hour expiration)
-- New tokens are automatically generated when cache expires or is invalid
-- To clear the cache, delete the `auth_token_cache.json` file.
+xml_generator.py       # Main Streamlit app
+templates/             # DITA XML templates
+  ct-concept.xml
+  ct-task.xml
+  ct-process.xml
+  ct-principle.xml
+  ct-reference.xml
+  chaptermap.ditamap
+requirements.txt       # Dependencies (streamlit)
+```
