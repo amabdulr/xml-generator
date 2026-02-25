@@ -241,6 +241,8 @@ def main():
         st.session_state.counts = {}
     if 'file_names' not in st.session_state:
         st.session_state.file_names = {}
+    if 'cec_id' not in st.session_state:
+        st.session_state.cec_id = ''
     if 'output_folder' not in st.session_state:
         st.session_state.output_folder = str(default_output_dir)
     if 'chapter_map_created' not in st.session_state:
@@ -259,46 +261,54 @@ def main():
     
     # Step 1: Get counts for each content type
     if st.session_state.step == 1:
-        st.header("Step 1: Configuration")
+        st.header("Step 1: Enter CEC ID")
         
-        # Output folder selection
-        st.subheader("📁 Output Folder")
-        col1, col2 = st.columns([4, 1])
+        # CEC ID input
+        st.subheader("🔑 CEC ID")
+        cec_id = st.text_input(
+            "Enter your CEC ID:",
+            value=st.session_state.cec_id,
+            placeholder="e.g., amel",
+            help="Your unique CEC ID. A personal folder will be created under output/ for your files."
+        )
+        st.session_state.cec_id = cec_id.strip().lower()
         
-        with col1:
-            output_folder = st.text_input(
-                "Select output folder path:",
-                value=st.session_state.output_folder,
-                help="Enter the full path where XML files will be saved"
-            )
-            st.session_state.output_folder = output_folder
-        
-        with col2:
-            st.write("")  # Spacing
-            st.write("")  # Spacing
-            if st.button("🗑️ Delete All", help="Delete all XML and DITAMAP files in the selected folder"):
-                output_path = Path(st.session_state.output_folder)
-                if output_path.exists():
-                    xml_files = list(output_path.glob("*.xml"))
-                    ditamap_files = list(output_path.glob("*.ditamap"))
-                    all_files = xml_files + ditamap_files
-                    if all_files:
-                        for file in all_files:
-                            file.unlink()
-                        st.success(f"✅ Deleted {len(xml_files)} XML file(s) and {len(ditamap_files)} DITAMAP file(s)")
-                        st.rerun()
-                    else:
-                        st.info("No XML or DITAMAP files found in the folder")
+        # Build per-user output folder path
+        if st.session_state.cec_id:
+            user_output_dir = default_output_dir / st.session_state.cec_id
+            st.session_state.output_folder = str(user_output_dir)
+            
+            st.markdown(f"📁 **Your output folder:** `output/{st.session_state.cec_id}/`")
+            
+            # Show folder status and delete button
+            col1, col2 = st.columns([4, 1])
+            
+            with col1:
+                if user_output_dir.exists():
+                    xml_count = len(list(user_output_dir.glob("*.xml")))
+                    ditamap_count = len(list(user_output_dir.glob("*.ditamap")))
+                    st.info(f"📂 Your folder contains {xml_count} XML file(s) and {ditamap_count} DITAMAP file(s)")
                 else:
-                    st.error("Folder does not exist")
-        
-        # Show folder status
-        output_path = Path(st.session_state.output_folder)
-        if output_path.exists():
-            xml_count = len(list(output_path.glob("*.xml")))
-            st.info(f"📂 Current folder contains {xml_count} XML file(s)")
+                    st.info("📂 Your folder will be created when files are generated.")
+            
+            with col2:
+                st.write("")  # Spacing
+                if st.button("🗑️ Delete My Files", help="Delete all XML and DITAMAP files in your folder"):
+                    if user_output_dir.exists():
+                        xml_files = list(user_output_dir.glob("*.xml"))
+                        ditamap_files = list(user_output_dir.glob("*.ditamap"))
+                        all_files = xml_files + ditamap_files
+                        if all_files:
+                            for file in all_files:
+                                file.unlink()
+                            st.success(f"✅ Deleted {len(xml_files)} XML file(s) and {len(ditamap_files)} DITAMAP file(s)")
+                            st.rerun()
+                        else:
+                            st.info("No XML or DITAMAP files found in your folder")
+                    else:
+                        st.info("Your folder does not exist yet")
         else:
-            st.warning(f"⚠️ Folder does not exist yet. It will be created when files are generated.")
+            st.warning("⚠️ Please enter your CEC ID to continue.")
         
         st.divider()
         
@@ -320,16 +330,19 @@ def main():
             submitted = st.form_submit_button("Next →")
             
             if submitted:
-                # Store counts and filter out zeros
-                st.session_state.counts = {k: v for k, v in counts.items() if v > 0}
-                
-                if not st.session_state.counts:
-                    st.error("Please enter at least one file count greater than 0")
+                if not st.session_state.cec_id:
+                    st.error("Please enter your CEC ID above before proceeding.")
                 else:
-                    # Create output directory if it doesn't exist
-                    Path(st.session_state.output_folder).mkdir(parents=True, exist_ok=True)
-                    st.session_state.step = 2
-                    st.rerun()
+                    # Store counts and filter out zeros
+                    st.session_state.counts = {k: v for k, v in counts.items() if v > 0}
+                    
+                    if not st.session_state.counts:
+                        st.error("Please enter at least one file count greater than 0")
+                    else:
+                        # Create output directory if it doesn't exist
+                        Path(st.session_state.output_folder).mkdir(parents=True, exist_ok=True)
+                        st.session_state.step = 2
+                        st.rerun()
     
     # Step 2: Get file names
     elif st.session_state.step == 2:
@@ -608,67 +621,6 @@ def main():
                 st.session_state.chapter_map_created = False
                 st.session_state.chapter_map_result = None
                 st.rerun()
-    
-    # Step 3: Generate files
-    elif st.session_state.step == 3:
-        st.header("Step 3: Generating XML files")
-        
-        progress_bar = st.progress(0)
-        status_text = st.empty()
-        
-        total_files = sum(len(names) for names in st.session_state.file_names.values())
-        files_created = 0
-        results = []
-        
-        output_dir = Path(st.session_state.output_folder)
-        
-        for content_type, names in st.session_state.file_names.items():
-            # Get the template file
-            template_key = content_types[content_type]
-            template_file = template_dir / f"ct-{template_key}.xml"
-            
-            for name in names:
-                status_text.text(f"Creating {name}...")
-                
-                success, result = create_xml_file(
-                    template_file,
-                    output_dir,
-                    name,
-                    template_key
-                )
-                
-                files_created += 1
-                progress_bar.progress(files_created / total_files)
-                
-                results.append({
-                    'type': content_type,
-                    'name': name,
-                    'success': success,
-                    'filename': result if success else None,
-                    'error': result if not success else None
-                })
-        
-        status_text.text("Complete!")
-        
-        # Display results
-        st.success(f"✅ Successfully created {sum(1 for r in results if r['success'])} XML files")
-        
-        st.subheader("Generated Files")
-        
-        for result in results:
-            if result['success']:
-                st.markdown(f"✅ **{result['name']}** → `{result['filename']}`")
-            else:
-                st.markdown(f"❌ **{result['name']}** → Error: {result['error']}")
-        
-        st.info(f"📁 Files saved to: `{output_dir}`")
-        
-        # Reset button
-        if st.button("🔄 Create More Files"):
-            st.session_state.step = 1
-            st.session_state.counts = {}
-            st.session_state.file_names = {}
-            st.rerun()
 
 if __name__ == "__main__":
     main()
