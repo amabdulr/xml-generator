@@ -228,6 +228,7 @@ def main():
     
     st.title("📄 XML File Generator")
     st.markdown("Generate XML files from templates based on Cisco Content Types")
+    st.warning("⚠️ Files stored on this server will be automatically deleted after one week. Please download your files when done.")
     
     # Base directory
     base_dir = Path(__file__).parent
@@ -249,6 +250,8 @@ def main():
         st.session_state.chapter_map_created = False
     if 'chapter_map_result' not in st.session_state:
         st.session_state.chapter_map_result = None
+    if 'validation_error' not in st.session_state:
+        st.session_state.validation_error = None
     
     # Content types mapping
     content_types = {
@@ -268,7 +271,7 @@ def main():
         cec_id = st.text_input(
             "Enter your CEC ID:",
             value=st.session_state.cec_id,
-            placeholder="e.g., amel",
+            placeholder="e.g., sanjibha",
             help="Your unique CEC ID. A personal folder will be created under output/ for your files."
         )
         st.session_state.cec_id = cec_id.strip().lower()
@@ -293,7 +296,7 @@ def main():
             
             with col2:
                 st.write("")  # Spacing
-                if st.button("🗑️ Delete My Files", help="Delete all XML and DITAMAP files in your folder"):
+                if st.button("🗑️ Clear My Folder", help="Delete all XML and DITAMAP files in your folder"):
                     if user_output_dir.exists():
                         xml_files = list(user_output_dir.glob("*.xml"))
                         ditamap_files = list(user_output_dir.glob("*.ditamap"))
@@ -307,6 +310,33 @@ def main():
                             st.info("No XML or DITAMAP files found in your folder")
                     else:
                         st.info("Your folder does not exist yet")
+            
+            # List existing files in the folder
+            if user_output_dir.exists():
+                existing_xml = sorted(user_output_dir.glob("*.xml"))
+                existing_ditamap = sorted(user_output_dir.glob("*.ditamap"))
+                existing_files = existing_xml + existing_ditamap
+                if existing_files:
+                    with st.expander(f"📋 View existing files ({len(existing_files)})", expanded=False):
+                        for f in existing_files:
+                            fcol1, fcol2 = st.columns([5, 1])
+                            with fcol1:
+                                icon = "🗺️" if f.suffix == ".ditamap" else "📄"
+                                st.markdown(f"{icon} `{f.name}`")
+                            with fcol2:
+                                if st.button("❌", key=f"del_{f.name}", help=f"Delete {f.name}"):
+                                    f.unlink()
+                                    st.rerun()
+                    
+                    # Download existing files
+                    zip_buffer = create_zip_file(str(user_output_dir), include_ditamap=True)
+                    if zip_buffer:
+                        st.download_button(
+                            label="📥 Download My Files",
+                            data=zip_buffer,
+                            file_name=f"{st.session_state.cec_id}-files.zip",
+                            mime="application/zip",
+                        )
         else:
             st.warning("⚠️ Please enter your CEC ID to continue.")
         
@@ -314,7 +344,7 @@ def main():
         
         # File counts
         st.subheader("📝 How many files do you need?")
-        st.markdown("Enter the number of files needed for each content type:")
+        st.markdown("Enter the number of files needed for each content type: (do not include H1)")
         
         with st.form("counts_form"):
             counts = {}
@@ -370,22 +400,48 @@ def main():
                 submitted = st.form_submit_button("Generate Files →")
             
             if back:
+                st.session_state.validation_error = None
                 st.session_state.step = 1
                 st.rerun()
             
             if submitted:
+                # Clear previous validation error
+                st.session_state.validation_error = None
+                
                 # Validate all names are provided
                 all_valid = True
                 for content_type, names in file_names.items():
                     if any(not name.strip() for name in names):
-                        st.error(f"Please provide names for all {content_type}")
+                        st.session_state.validation_error = f"Please provide names for all {content_type}"
                         all_valid = False
                         break
+                
+                # Check for duplicate names within the same content type
+                if all_valid:
+                    for content_type, names in file_names.items():
+                        kebab_names = [convert_to_kebab_case(n) for n in names]
+                        seen = {}
+                        for i, kname in enumerate(kebab_names):
+                            if kname in seen:
+                                st.session_state.validation_error = (
+                                    f"Duplicate file name in **{content_type}**: "
+                                    f"\"{names[i]}\" and \"{names[seen[kname]]}\" "
+                                    f"would both generate the same file. Please use unique names."
+                                )
+                                all_valid = False
+                                break
+                            seen[kname] = i
+                        if not all_valid:
+                            break
                 
                 if all_valid:
                     st.session_state.file_names = file_names
                     st.session_state.step = 3
                     st.rerun()
+        
+        # Display validation error outside the form so it clears properly
+        if st.session_state.validation_error:
+            st.error(st.session_state.validation_error)
     
     # Step 3: Generate files
     elif st.session_state.step == 3:
@@ -439,7 +495,21 @@ def main():
             else:
                 st.markdown(f"❌ **{result['name']}** → Error: {result['error']}")
         
-        st.info(f"📁 Files saved to: `{output_dir}`")
+        display_path = f"output/{st.session_state.cec_id}/" if st.session_state.cec_id else "output/"
+        st.info(f"📁 Files saved to: `{display_path}`")
+        
+        st.divider()
+        
+        # Download XML files button
+        zip_buffer = create_zip_file(output_dir, include_ditamap=False)
+        if zip_buffer:
+            st.download_button(
+                label="📥 Download XML Files",
+                data=zip_buffer,
+                file_name="xml-files.zip",
+                mime="application/zip",
+                use_container_width=True
+            )
         
         st.divider()
         
@@ -447,7 +517,7 @@ def main():
         col1, col2 = st.columns(2)
         
         with col1:
-            if st.button("📘 Create Chapter Map", use_container_width=True):
+            if st.button("📘 Next: Chapter Map →", use_container_width=True):
                 st.session_state.step = 4
                 st.rerun()
         
@@ -475,11 +545,18 @@ def main():
         else:
             st.info(f"📄 Found {len(xml_files)} XML file(s) in the output folder")
             
-            # Show files that will be included
-            with st.expander("View files to be included in map"):
+            # Show files that will be included, with option to remove
+            with st.expander("View / manage files to be included in map", expanded=True):
                 for xml_file in sorted(xml_files):
-                    xml_type, title = get_xml_info(xml_file)
-                    st.markdown(f"- **{xml_file.name}** ({xml_type}): {title}")
+                    fcol1, fcol2 = st.columns([4, 1])
+                    with fcol1:
+                        xml_type, title = get_xml_info(xml_file)
+                        type_label = xml_type.replace('ct_', '').capitalize()
+                        st.markdown(f"📄 `{xml_file.name}` — *{type_label}*: {title}")
+                    with fcol2:
+                        if st.button("🗑️ Remove", key=f"map_del_{xml_file.name}", help=f"Remove {xml_file.name}"):
+                            xml_file.unlink()
+                            st.rerun()
             
             st.divider()
             
@@ -535,7 +612,8 @@ def main():
                 if result['success']:
                     st.success(f"✅ Chapter map created successfully!")
                     st.markdown(f"**File:** `{result['filename']}`")
-                    st.info(f"📁 Saved to: `{result['output_dir']}`")
+                    display_path = f"output/{st.session_state.cec_id}/" if st.session_state.cec_id else "output/"
+                    st.info(f"📁 Saved to: `{display_path}`")
                     
                     # Show preview
                     with st.expander("Preview Chapter Map"):
@@ -575,7 +653,7 @@ def main():
                             st.session_state.chapter_map_result = None
                             st.rerun()
                     with col3:
-                        if st.button("Next: Instructions →", use_container_width=True):
+                        if st.button("Next Steps →", use_container_width=True):
                             st.session_state.step = 5
                             st.rerun()
                 else:
