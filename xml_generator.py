@@ -5,6 +5,8 @@ from pathlib import Path
 import xml.etree.ElementTree as ET
 import zipfile
 import io
+from datetime import datetime
+from openpyxl import Workbook, load_workbook
 
 def convert_to_kebab_case(text):
     """Convert text to kebab-case format."""
@@ -25,7 +27,7 @@ def update_xml_id(xml_content, file_id, content_type):
         'task': 'ct_task',
         'process': 'ct_process',
         'principle': 'ct_principle',
-        'reference': 'ct_concept'  # reference uses ct_concept element
+        'reference': 'ct_reference'
     }
     
     element_name = type_mapping.get(content_type, 'ct_concept')
@@ -62,18 +64,8 @@ def create_xml_file(template_path, output_path, file_name, content_type):
         # Update the title with the original file name
         xml_content = update_xml_title(xml_content, file_name)
         
-        # Add content type prefix to filename
-        prefix_mapping = {
-            'concept': 'c-',
-            'principle': 'pl-',
-            'reference': 'r-',
-            'process': 'pr-',
-            'task': 't-'
-        }
-        prefix = prefix_mapping.get(content_type, '')
-        
-        # Create output filename with prefix
-        output_filename = f"{prefix}{file_id}.xml"
+        # Create output filename
+        output_filename = f"{file_id}.xml"
         full_output_path = os.path.join(output_path, output_filename)
         
         # Write the file
@@ -135,12 +127,8 @@ def create_chapter_map(output_folder, chapter_name):
         
         for xml_file in xml_files:
             xml_type, title = get_xml_info(xml_file)
-            # Map ct_concept references to ct_reference if filename starts with r-
-            if xml_type == 'ct_concept' and xml_file.name.startswith('r-'):
-                files_by_type['ct_reference'].append((xml_file, xml_type, title))
-            else:
-                if xml_type in files_by_type:
-                    files_by_type[xml_type].append((xml_file, xml_type, title))
+            if xml_type in files_by_type:
+                files_by_type[xml_type].append((xml_file, xml_type, title))
         
         # Create chapter map content
         map_id = f"map_{convert_to_kebab_case(chapter_name)}"
@@ -223,12 +211,35 @@ def create_zip_file(output_folder, include_ditamap=False):
     except Exception as e:
         return None
 
+def log_feedback(base_dir, name, comments, usefulness, time_saved):
+    """Log feedback to testresults.xlsx."""
+    feedback_file = base_dir / "testresults.xlsx"
+    
+    if feedback_file.exists():
+        wb = load_workbook(feedback_file)
+        ws = wb.active
+    else:
+        wb = Workbook()
+        ws = wb.active
+        ws.title = "Feedback"
+        ws.append(["Timestamp", "Name", "Comments", "Usefulness (1-10)", "Time Saved (minutes)"])
+    
+    ws.append([
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        name,
+        comments,
+        usefulness,
+        time_saved
+    ])
+    
+    wb.save(feedback_file)
+
 def main():
     st.set_page_config(page_title="XML File Generator", page_icon="📄", layout="wide")
     
     st.title("📄 XML File Generator")
     st.markdown("Generate XML files from templates based on Cisco Content Types")
-    st.warning("⚠️ Files stored on this server will be automatically deleted after one week. Please download your files when done.")
+    st.error("⚠️ Files stored on this server will be automatically deleted after one week. Please download your files when done.")
     
     # Base directory
     base_dir = Path(__file__).parent
@@ -269,12 +280,14 @@ def main():
         # CEC ID input
         st.subheader("🔑 CEC ID")
         cec_id = st.text_input(
-            "Enter your CEC ID:",
+            "Enter your CEC ID (without @cisco.com):",
             value=st.session_state.cec_id,
             placeholder="e.g., sanjibha",
-            help="Your unique CEC ID. A personal folder will be created under output/ for your files."
+            help="Your unique CEC ID. Do not include @cisco.com. A personal folder will be created under output/ for your files."
         )
-        st.session_state.cec_id = cec_id.strip().lower()
+        # Strip @cisco.com if user includes it
+        cleaned_cec = cec_id.strip().lower().replace("@cisco.com", "")
+        st.session_state.cec_id = cleaned_cec
         
         # Build per-user output folder path
         if st.session_state.cec_id:
@@ -344,7 +357,7 @@ def main():
         
         # File counts
         st.subheader("📝 How many files do you need?")
-        st.markdown("Enter the number of files needed for each content type: (do not include H1)")
+        st.markdown("Enter the number of files needed for each content type:")
         
         with st.form("counts_form"):
             counts = {}
@@ -377,6 +390,7 @@ def main():
     # Step 2: Get file names
     elif st.session_state.step == 2:
         st.header("Step 2: Enter file names")
+        st.markdown("Enter the title for each file. Do not include `.xml` — it will be added automatically.")
         
         with st.form("names_form"):
             file_names = {}
@@ -416,21 +430,22 @@ def main():
                         all_valid = False
                         break
                 
-                # Check for duplicate names within the same content type
+                # Check for duplicate names across all content types
                 if all_valid:
+                    seen = {}  # kebab_name -> (content_type, original_name)
                     for content_type, names in file_names.items():
-                        kebab_names = [convert_to_kebab_case(n) for n in names]
-                        seen = {}
-                        for i, kname in enumerate(kebab_names):
+                        for name in names:
+                            kname = convert_to_kebab_case(name)
                             if kname in seen:
+                                prev_type, prev_name = seen[kname]
                                 st.session_state.validation_error = (
-                                    f"Duplicate file name in **{content_type}**: "
-                                    f"\"{names[i]}\" and \"{names[seen[kname]]}\" "
+                                    f"Duplicate file name: "
+                                    f"\"{name}\" ({content_type}) and \"{prev_name}\" ({prev_type}) "
                                     f"would both generate the same file. Please use unique names."
                                 )
                                 all_valid = False
                                 break
-                            seen[kname] = i
+                            seen[kname] = (content_type, name)
                         if not all_valid:
                             break
                 
@@ -530,7 +545,11 @@ def main():
     
     # Step 4: Create Chapter Map
     elif st.session_state.step == 4:
-        st.header("Step 4: Create Chapter Map")
+        hcol1, hcol2 = st.columns([3, 2])
+        with hcol1:
+            st.header("Step 4: Create Chapter Map")
+        with hcol2:
+            st.markdown("<h4 style='text-align: right; padding-top: 10px; color: #1E90FF;'>💡 Scroll down to give us feedback! (Create your chapter map first)</h4>", unsafe_allow_html=True)
         
         output_dir = Path(st.session_state.output_folder)
         
@@ -545,8 +564,21 @@ def main():
         else:
             st.info(f"📄 Found {len(xml_files)} XML file(s) in the output folder")
             
+            # Show existing ditamap files with option to delete
+            existing_ditamaps = sorted(output_dir.glob("*.ditamap"))
+            if existing_ditamaps:
+                with st.expander(f"�️ Delete existing chapter maps ({len(existing_ditamaps)})", expanded=False):
+                    for dmap in existing_ditamaps:
+                        dcol1, dcol2 = st.columns([4, 1])
+                        with dcol1:
+                            st.markdown(f"🗺️ `{dmap.name}`")
+                        with dcol2:
+                            if st.button("🗑️ Delete", key=f"dmap_del_{dmap.name}", help=f"Delete {dmap.name}"):
+                                dmap.unlink()
+                                st.rerun()
+            
             # Show files that will be included, with option to remove
-            with st.expander("View / manage files to be included in map", expanded=True):
+            with st.expander("View / manage files to be included in map (Delete unnecessary files)", expanded=True):
                 for xml_file in sorted(xml_files):
                     fcol1, fcol2 = st.columns([4, 1])
                     with fcol1:
@@ -563,9 +595,9 @@ def main():
             # Chapter name input
             with st.form("chapter_map_form"):
                 chapter_name = st.text_input(
-                    "Chapter Name:",
+                    "Chapter Name (do not include .ditamap):",
                     placeholder="e.g., Getting Started Guide",
-                    help="Enter the name for your chapter map"
+                    help="Enter the name for your chapter map. Do not include .ditamap — it will be added automatically."
                 )
                 
                 col1, col2 = st.columns([1, 5])
@@ -610,16 +642,21 @@ def main():
                 result = st.session_state.chapter_map_result
                 
                 if result['success']:
-                    st.success(f"✅ Chapter map created successfully!")
+                    st.success(f"✅ Chapter map created successfully! Scroll down to give feedback.")
                     st.markdown(f"**File:** `{result['filename']}`")
                     display_path = f"output/{st.session_state.cec_id}/" if st.session_state.cec_id else "output/"
                     st.info(f"📁 Saved to: `{display_path}`")
                     
-                    # Show preview
-                    with st.expander("Preview Chapter Map"):
-                        map_path = Path(result['output_dir']) / result['filename']
-                        with open(map_path, 'r', encoding='utf-8') as f:
-                            st.code(f.read(), language='xml')
+                    # Show all ditamap files in folder
+                    all_ditamaps = sorted(Path(result['output_dir']).glob("*.ditamap"))
+                    if all_ditamaps:
+                        with st.expander(f"Preview Chapter Maps ({len(all_ditamaps)})"):
+                            for dmap in all_ditamaps:
+                                st.markdown(f"**🗺️ {dmap.name}**")
+                                with open(dmap, 'r', encoding='utf-8') as f:
+                                    st.code(f.read(), language='xml')
+                                if dmap != all_ditamaps[-1]:
+                                    st.divider()
                     
                     st.divider()
                     
@@ -633,6 +670,35 @@ def main():
                             mime="application/zip",
                             use_container_width=True
                         )
+                    
+                    st.divider()
+                    
+                    # Feedback form
+                    st.subheader("📝 Help us improve")
+                    with st.form("feedback_form"):
+                        feedback_name = st.text_input("Name:", placeholder="Your name")
+                        feedback_comments = st.text_area("Comments:", placeholder="Any feedback or suggestions...")
+                        feedback_usefulness = st.slider("How useful is this tool?", min_value=1, max_value=10, value=10)
+                        feedback_time_saved = st.number_input("Time saved (in minutes):", min_value=0, max_value=9999, value=0, step=1)
+                        
+                        feedback_submitted = st.form_submit_button("Submit Feedback")
+                        if feedback_submitted:
+                            if not feedback_name.strip():
+                                st.error("Please enter your name.")
+                            else:
+                                log_feedback(base_dir, feedback_name.strip(), feedback_comments.strip(), feedback_usefulness, feedback_time_saved)
+                                st.success("✅ Thank you for your feedback!")
+                    
+                    # Download feedback results
+                    feedback_file = base_dir / "testresults.xlsx"
+                    if feedback_file.exists():
+                        with open(feedback_file, "rb") as f:
+                            st.download_button(
+                                label="📊 Download Feedback Results",
+                                data=f.read(),
+                                file_name="testresults.xlsx",
+                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            )
                     
                     st.divider()
                     
